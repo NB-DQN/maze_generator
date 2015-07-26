@@ -1,0 +1,20 @@
+#!/usr/bin/env th
+
+function is_natural(num)
+  if type(num) == "number" and num == math.floor(num) and num > 0 then
+    return true
+  else
+    return false
+  end
+end
+
+package.path = package.path .. ";" .. paths.concat(paths.thisfile(), "../../lib") .. "/?.lua"
+require "maze"
+
+if     #arg == 0 then
+  print(Maze(9, 9).field)
+elseif #arg == 2 and is_natural(tonumber(arg[1])) and is_natural(tonumber(arg[2])) then
+  print(Maze(arg[1], arg[2]).field)
+else
+  error("wrong input arguments")
+end
