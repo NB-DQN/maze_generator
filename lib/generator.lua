@@ -43,5 +43,20 @@ function generate_field(size_x, size_y)
     end
   end
 
+  -- create exit
+  local periphery = {}
+  for x = 3, field_x - 2, 2 do
+    periphery[#periphery + 1] = { { x,           3 }, { x,           2 } }
+    periphery[#periphery + 1] = { { x, field_y - 2 }, { x, field_y - 1 } }
+  end
+  for y = 5, field_y - 4, 2 do
+    periphery[#periphery + 1] = { { 3,           y }, { 2,           y } }
+    periphery[#periphery + 1] = { { field_x - 2, y }, { field_x - 1, y } }
+  end
+
+  local exit = periphery[math.floor(torch.uniform(1, #periphery + 1))]
+  field[exit[1]] = 9
+  field[exit[2]] = 0
+
   return field
 end
