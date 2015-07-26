@@ -1,9 +1,9 @@
-function generate_field(size_x, size_y)
+function generate(size_x, size_y)
   local field_x = size_x * 2 + 3
   local field_y = size_y * 2 + 3
 
-  local field = torch.Tensor(field_x, field_y):zero()
-  field[{ { 2, field_x - 1 }, { 2, field_y - 1 } }] = 1
+  local field = torch.ShortTensor(field_x, field_y):zero()
+  field[{ { 2, field_x - 1 }, { 2, field_y - 1 } }] = 9
 
   local start_cell = { math.floor(torch.uniform(1, size_x)) * 2 + 1, math.floor(torch.uniform(1, size_y)) * 2 + 1 }
   field[start_cell] = 0
@@ -22,7 +22,7 @@ function generate_field(size_x, size_y)
     }
     local candidates = {}
     for direction = 1, 4 do
-      if field[candidate_cells[direction][1]] == 1 then
+      if field[candidate_cells[direction][1]] == 9 then
         candidates[#candidates + 1] = direction
       end
     end
@@ -50,8 +50,40 @@ function generate_field(size_x, size_y)
   end
 
   local exit = periphery[math.floor(torch.uniform(1, #periphery + 1))]
-  field[exit[1]] = 9
+  field[exit[1]] = 1
   field[exit[2]] = 0
+
+  return rearrange(field, size_x, size_y)
+end
+
+function rearrange(raw_field, size_x, size_y)
+  --[[
+  each cell in the field containes 5-element array (all elemtns are binary).
+  first 4 bits indicate if there are wall around the cell (1 means wall).
+  last bit indicate if the cell is the exit (1 means exit).
+  i.e. { wall_top, wall_right, wall_bottom, wall_left, exit }
+  --]]
+  local field = torch.ShortTensor(size_x, size_y, 5):zero()
+
+  for y = 1, size_y do
+    for x = 1, size_x do
+      local current_cell = { x * 2 + 1, y * 2 + 1 }
+      local neighbor = {
+        { current_cell[1] - 1, current_cell[2]     },
+        { current_cell[1],     current_cell[2] + 1 },
+        { current_cell[1] + 1, current_cell[2]     },
+        { current_cell[1],     current_cell[2] - 1 },
+      }
+      for direction = 1, 4 do
+        if raw_field[neighbor[direction]] == 9 then
+          field[x][y][direction] = 1
+        end
+      end
+      if raw_field[current_cell] == 1 then
+        field[x][y][5] = 1
+      end
+    end
+  end
 
   return field
 end

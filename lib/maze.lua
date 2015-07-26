@@ -11,6 +11,6 @@ setmetatable(Maze, {
 
 function Maze.new(size_x, size_y)
   local self = setmetatable({}, Maze)
-  self.field = generate_field(size_x, size_y)
+  self.field = generate(size_x, size_y)
   return self
 end
