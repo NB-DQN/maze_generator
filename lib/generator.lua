@@ -65,8 +65,8 @@ function rearrange(raw_field, size_x, size_y)
   --]]
   local field = torch.ShortTensor(size_x, size_y, 5):zero()
 
-  for y = 1, size_y do
-    for x = 1, size_x do
+  for x = 1, size_x do
+    for y = 1, size_y do
       local current_cell = { x * 2 + 1, y * 2 + 1 }
       local neighbor = {
         { current_cell[1] - 1, current_cell[2]     },

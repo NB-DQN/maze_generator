@@ -12,9 +12,11 @@ package.path = package.path .. ";" .. paths.concat(paths.thisfile(), "../../lib"
 require "maze"
 
 if     #arg == 0 then
-  print(Maze(9, 9).field)
+  maze = Maze(9, 9)
 elseif #arg == 2 and is_natural(tonumber(arg[1])) and is_natural(tonumber(arg[2])) then
-  print(Maze(arg[1], arg[2]).field)
+  maze = Maze(tonumber(arg[1]), tonumber(arg[2]))
 else
   error("wrong input arguments")
 end
+
+maze:display_cui()
