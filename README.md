@@ -22,3 +22,20 @@ when printing the maze on terminal. So describe directions in field as 1, 2, 3,
 * 2: positive direction of the y axis
 * 3: positive direction of the x axis
 * 4: negative direction of the y axis
+
+### API
+```Lua
+-- Generate new maze
+m = Maze() -- default size is 9x9
+-- or
+m = Maze({ size_x, size_y })
+
+-- Get wall info around specified cell
+m:wall({ x, y }) -- => [0, 0, 1, 1]
+
+-- Judge if the place is the exit
+m:is_exit({ x, y }) -- => 0 or 1
+
+-- Display the maze field on the terminal
+m:display_cui()
+```
