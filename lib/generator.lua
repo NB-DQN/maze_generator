@@ -61,7 +61,7 @@ function rearrange(raw_field, size_x, size_y)
   each cell in the field containes 5-element array (all elemtns are binary).
   first 4 bits indicate if there are wall around the cell (1 means wall).
   last bit indicate if the cell is the exit (1 means exit).
-  i.e. { wall_top, wall_right, wall_bottom, wall_left, exit }
+  i.e. { wall_1, wall_2, wall_3, wall_4, exit }
   --]]
   local field = torch.ShortTensor(size_x, size_y, 5):zero()
 
