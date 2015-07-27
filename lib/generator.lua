@@ -1,11 +1,10 @@
-function generate(size_x, size_y)
-  local field_x = size_x * 2 + 3
-  local field_y = size_y * 2 + 3
+function generate(size)
+  local field_size = { size[1] * 2 + 3, size[2] * 2 + 3 }
 
-  local field = torch.ShortTensor(field_x, field_y):zero()
-  field[{ { 2, field_x - 1 }, { 2, field_y - 1 } }] = 9
+  local field = torch.ShortTensor(field_size[1], field_size[2]):zero()
+  field[{ { 2, field_size[1] - 1 }, { 2, field_size[2] - 1 } }] = 9
 
-  local start_cell = { math.floor(torch.uniform(1, size_x)) * 2 + 1, math.floor(torch.uniform(1, size_y)) * 2 + 1 }
+  local start_cell = { math.floor(torch.uniform(1, size[1])) * 2 + 1, math.floor(torch.uniform(1, size[2])) * 2 + 1 }
   field[start_cell] = 0
   local active_cells = { start_cell }
 
@@ -40,33 +39,33 @@ function generate(size_x, size_y)
 
   -- create exit
   local periphery = {}
-  for x = 3, field_x - 2, 2 do
-    periphery[#periphery + 1] = { { x,           3 }, { x,           2 } }
-    periphery[#periphery + 1] = { { x, field_y - 2 }, { x, field_y - 1 } }
+  for x = 3, field_size[1] - 2, 2 do
+    periphery[#periphery + 1] = { { x,                 3 }, { x,                 2 } }
+    periphery[#periphery + 1] = { { x, field_size[2] - 2 }, { x, field_size[2] - 1 } }
   end
-  for y = 5, field_y - 4, 2 do
-    periphery[#periphery + 1] = { { 3,           y }, { 2,           y } }
-    periphery[#periphery + 1] = { { field_x - 2, y }, { field_x - 1, y } }
+  for y = 5, field_size[2] - 4, 2 do
+    periphery[#periphery + 1] = { { 3,                 y }, { 2,                 y } }
+    periphery[#periphery + 1] = { { field_size[1] - 2, y }, { field_size[1] - 1, y } }
   end
 
   local exit = periphery[math.floor(torch.uniform(1, #periphery + 1))]
   field[exit[1]] = 1
   field[exit[2]] = 0
 
-  return rearrange(field, size_x, size_y)
+  return rearrange(field, size)
 end
 
-function rearrange(raw_field, size_x, size_y)
+function rearrange(raw_field, size)
   --[[
   each cell in the field containes 5-element array (all elemtns are binary).
   first 4 bits indicate if there are wall around the cell (1 means wall).
   last bit indicate if the cell is the exit (1 means exit).
   i.e. { wall_1, wall_2, wall_3, wall_4, exit }
   --]]
-  local field = torch.ShortTensor(size_x, size_y, 5):zero()
+  local field = torch.ShortTensor(size[1], size[2], 5):zero()
 
-  for x = 1, size_x do
-    for y = 1, size_y do
+  for x = 1, size[1] do
+    for y = 1, size[2] do
       local current_cell = { x * 2 + 1, y * 2 + 1 }
       local neighbor = {
         { current_cell[1] - 1, current_cell[2]     },

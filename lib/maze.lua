@@ -9,32 +9,31 @@ setmetatable(Maze, {
   end
 })
 
-function Maze.new(size_x, size_y)
+function Maze.new(size)
   local self = setmetatable({}, Maze)
-  self.field = generate(size_x, size_y)
-  self.size_x = size_x
-  self.size_y = size_y
+  self.field = generate(size)
+  self.size = size
   return self
 end
 
-function Maze:wall(x, y)
-  if x < 1 or self.size_x < x or y < 1 or self.size_y < y then
+function Maze:wall(cell)
+  if cell[1] < 1 or self.size[1] < cell[1] or cell[2] < 1 or self.size[2] < cell[2] then
     error("wrong coordinate")
   end
-  return self.field[{ x, y, { 1, 4 } }]
+  return self.field[{ cell[1], cell[2], { 1, 4 } }]
 end
 
-function Maze:is_exit(x, y)
-  if x < 1 or self.size_x < x or y < 1 or self.size_y < y then
+function Maze:is_exit(cell)
+  if cell[1] < 1 or self.size[1] < cell[1] or cell[2] < 1 or self.size[2] < cell[2] then
     error("wrong coordinate")
   end
-  return self.field[x][y][5]
+  return self.field[cell[1]][cell[2]][5]
 end
 
 function Maze:display_cui()
   local str = ""
-  for x = 1, self.size_x do
-    for y = 1, self.size_y do
+  for x = 1, self.size[1] do
+    for y = 1, self.size[2] do
       str = str .. "8"
       if self.field[x][y][1] == 1 then
         str = str .. "888"
@@ -44,7 +43,7 @@ function Maze:display_cui()
     end
     str = str .. "8\n"
 
-    for y = 1, self.size_y do
+    for y = 1, self.size[2] do
       if self.field[x][y][4] == 1 then
         str = str .. "8"
       else
@@ -52,7 +51,7 @@ function Maze:display_cui()
       end
       str = str .. "   "
     end
-    if self.field[x][self.size_y][2] == 1 then
+    if self.field[x][self.size[2]][2] == 1 then
       str = str .. "8"
     else
       str = str .. " "
@@ -60,9 +59,9 @@ function Maze:display_cui()
     str = str .. "\n"
   end
 
-  for y = 1, self.size_y do
+  for y = 1, self.size[2] do
     str = str .. "8"
-    if self.field[self.size_x][y][3] == 1 then
+    if self.field[self.size[1]][y][3] == 1 then
       str = str .. "888"
     else
       str = str .. "   "
